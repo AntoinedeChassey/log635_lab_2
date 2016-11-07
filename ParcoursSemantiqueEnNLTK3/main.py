@@ -21,10 +21,6 @@ class nltkTextParser:
     def __init__(self, textFile, grammarFile):
         self.textFile = textFile
         self.grammarFile   = grammarFile
-
-        self.sentences = []
-        self.ambiguous = []
-        self.notDefined = []
         
         self.loadSentences()
         self.loadGrammar()
@@ -52,56 +48,31 @@ class nltkTextParser:
     def makeFacts(self, outputFile):
         with open(outputFile, 'w') as f:
             for sentence in self.sentences:
-                sanitizedSentence = self.sanitizeSentence(sentence)
+                comprehensiveSentence = self.getSentence(sentence)
         
-                print('Parsing <{}>'.format(sanitizedSentence))
-        
-                trees = self.parse(sanitizedSentence)
-        
-                if len(trees) > 1:
-                    self.ambiguous.append(sanitizedSentence)
-                elif len(trees) == 0:
-                    self.notDefined.append(sanitizedSentence)
-        
+                print('Processing [{}]'.format(comprehensiveSentence))
+                
+                # tokenize the comprehensiveSentence
+                tokens = comprehensiveSentence.split()
+                trees = list(self.parser.parse(tokens))
+                
                 for tree in trees:
                     self.writeJessRule(f, str(tree.label()['SEM']))
                     print(tree)
-                    tree.draw()
-
-    def stats(self):
-        print("{} ambiguous sentences".format(len(self.ambiguous)))
-        for s in self.ambiguous:
-            print("- {}".format(s))
-    
-        print("{} sentences that the grammar cannot define".format(len(self.notDefined)))
-        for s in self.notDefined:
-            print("- {}".format(s))
-        
-        print("{} jess compatible facts generated".format(self.factsCount))
+#                     tree.draw()
 
     """
     Returns a list of tokens from sentence
     """
-    def sanitizeSentence(self, sentence):
-        sanitizedSentence = re.sub(r'(\.|\,|\'|\#)', ' ', sentence).strip('\r\n').strip()
-        return sanitizedSentence
-
-    """
-    Returns a list of trees generated from the sentence
-    RegEx: https://regex101.com/r/nG1gU7/27
-    """
-    def parse(self, sentence):
-#         (?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s
-#         tokens = RegexpTokenizer(r'\w+').tokenize(sentence)
-#         return list(tokens)
-        tokens = sentence.split()
-        return list(self.parser.parse(tokens))
-
+    def getSentence(self, sentence):
+        comprehensiveSentence = re.sub(r'(\.|\#|\,|\')', ' ', sentence).strip('\r\n').strip()
+        return comprehensiveSentence
     
     """
     Generate the jess rule from the generated sentence label
     """
     def writeJessRule(self, f, label):
+        print(label)
         f.write('; {}\n'.format(label))
                     
 #         # remove trailling ( )
@@ -186,6 +157,4 @@ def split_into_sentences(text):
 
 if __name__ == '__main__':
     nltkSolver = nltkTextParser('text.txt', 'grammar.cfg')
-    #nltkSolver.readText()
     nltkSolver.makeFacts('facts.clp')
-#     makeFacts('facts.clp')

@@ -1,4 +1,4 @@
-; tuer(corde,Marie,Jean)
+; tuer(corde(bleue),Marie,Jean)
 
 ; jouer(Henri,vache)
 
