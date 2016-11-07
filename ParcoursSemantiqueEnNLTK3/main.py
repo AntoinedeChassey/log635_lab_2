@@ -3,7 +3,7 @@
 '''
 Created on 24 oct. 2016
 
-@author: Antoine de Chassey
+@author: Antoine de Chassey, Victor Mabille, Louis Congard
 '''
 
 import re
@@ -31,14 +31,14 @@ class nltkTextParser:
     def loadSentences(self):
         with open (self.textFile, "r", encoding='utf-8') as myfile:
                 text = myfile.read()
-                self.sentences = split_into_sentences(text)
+                self.sentences = split_into_sentences(text.lower())
         print(self.sentences)
         
     """
     Load the grammar file parse it in NLTK
     """
     def loadGrammar(self):
-        with open(self.grammarFile, 'r') as f:
+        with open(self.grammarFile, "r", encoding='utf-8') as f:
             my_grammar = grammar.FeatureGrammar.fromstring(f.read())
             self.parser = nltk.FeatureEarleyChartParser(my_grammar)
             
@@ -55,7 +55,7 @@ class nltkTextParser:
                 # tokenize the comprehensiveSentence
                 tokens = comprehensiveSentence.split()
                 trees = list(self.parser.parse(tokens))
-                
+                                
                 for tree in trees:
                     self.writeJessRule(f, str(tree.label()['SEM']))
                     print(tree)
@@ -69,11 +69,11 @@ class nltkTextParser:
         return comprehensiveSentence
     
     """
-    Generate the jess rule from the generated sentence label
+    Generate the jess rule from the tree label
     """
     def writeJessRule(self, f, label):
         print(label)
-        f.write('; {}\n'.format(label))
+        f.write('(assert ({}))'.format(label))
         f.write('\n')
         
 """
