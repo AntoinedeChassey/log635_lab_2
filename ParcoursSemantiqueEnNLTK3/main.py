@@ -46,7 +46,7 @@ class nltkTextParser:
     Generate an output file for all the rules
     """
     def makeFacts(self, outputFile):
-        with open(outputFile, 'w') as f:
+        with open(outputFile, 'w', encoding='utf-8') as f:
             for sentence in self.sentences:
                 comprehensiveSentence = self.getSentence(sentence)
         
@@ -58,7 +58,7 @@ class nltkTextParser:
                                 
                 for tree in trees:
                     self.writeJessRule(f, str(tree.label()['SEM']))
-                    print(tree)
+#                     print(tree)
 #                     tree.draw()
 
     """
