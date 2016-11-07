@@ -3,7 +3,7 @@
 import nltk
 from nltk import *
 
-with open ("C:/Users/ANTOINE/My Documents/LiClipse Workspace/log635_lab_2/ParcoursSemantiqueEnNLTK3/exemple2.cfg", "r") as myfile:
+with open ("exemple2.cfg", "r") as myfile:
     grammaireText=myfile.read()
 
 grammar = grammar.FeatureGrammar.fromstring(grammaireText)
