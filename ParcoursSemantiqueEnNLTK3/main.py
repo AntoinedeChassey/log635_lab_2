@@ -50,14 +50,16 @@ class nltkTextParser:
             for sentence in self.sentences:
                 comprehensiveSentence = self.getSentence(sentence)
         
-                print('Processing [{}]'.format(comprehensiveSentence))
+                print('\nProcessing [{}]'.format(comprehensiveSentence))
                 
                 # tokenize the comprehensiveSentence
                 tokens = comprehensiveSentence.split()
                 trees = list(self.parser.parse(tokens))
-                                
-                for tree in trees:
-                    self.writeJessRule(f, str(tree.label()['SEM']))
+                
+                self.writeJessRule(f, str(trees[len(trees)-1].label()['SEM']))
+    
+#                 for tree in trees:
+#                     self.writeJessRule(f, str(tree.label()['SEM']))
 #                     print(tree)
 #                     tree.draw()
 
